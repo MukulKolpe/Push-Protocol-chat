@@ -1,25 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { WagmiConfig, createClient } from "wagmi";
+import {
+  ConnectKitProvider,
+  ConnectKitButton,
+  getDefaultClient,
+} from "connectkit";
+import { Chat } from "@pushprotocol/uiweb";
+import { useAccount } from "wagmi";
 
-function App() {
+const client = createClient(
+  getDefaultClient({
+    appName: "Push Protocol Chat",
+  })
+);
+
+const App = () => {
+  const { address } = useAccount();
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <WagmiConfig client={client}>
+      <ConnectKitProvider>
+        <Chat
+          account={address}
+          supportAddress="0xfC001B20Db6195b148cfc4F7685091931D93cD93"
+          apiKey={process.env.REACT_APP_PUSH_API_KEY}
+          env="staging"
+        />
+        <div className="App">
+          <ConnectKitButton />
+        </div>
+      </ConnectKitProvider>
+    </WagmiConfig>
   );
-}
+};
 
 export default App;
